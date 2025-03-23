@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border: unset;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      font-family: "SF Pro";
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    iframe {
+      flex: 1;
+      min-height: 0px;
+    }
+
+    a {
+      text-decoration: unset;
+    }
+
+    .page-footer,
+    .page-footer-mobile {
+      bottom: 0;
+      width: 100%;
+      padding: 12px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      background-color: #fff;
+      transition: opacity 0.15s ease-in-out;
+    }
+
+
+    .page-footer-mobile {
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      color: #34322D;
+      font-size: 13px;
+      font-style: normal;
+      line-height: 16px;
+      letter-spacing: -0.304px;
+      font-family: Georgia;
+    }
+
+    .description {
+      color: #858481;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px;
+      letter-spacing: -0.077px;
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer-button {
+      display: flex;
+      min-width: 64px;
+      min-height: 28px;
+      padding: 6px 8px;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      border-radius: 8px;
+      background-color: #1A1A19;
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-left: 6px;
+
+    }
+
+    .footer-button:hover {
+      opacity: 0.8;
+    }
+
+    .close {
+      cursor: pointer;
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+      flex-shrink: 0;
+    }
+
+    .close:hover {
+      opacity: 0.8;
+    }
+
+    .info {
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      top: 2px;
+    }
+
+    .info:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 140%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 16px;
+      background-color: #171818;
+      color: #fff;
+      max-width: 280px;
+      width: max-content;
+    }
+
+
+    @media (max-width: 830px) {
+      .page-footer {
+        display: none;
+      }
+
+      .page-footer-mobile {
+        display: flex;
+      }
+
+      .footer-left {
+        width: 100%;
+      }
+
+      .footer-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+
+      .close {
+        margin-left: auto;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .info:hover::after {
+        position: fixed;
+        bottom: 64px;
+        left: 150px;
+      }
+    }
+  </style>
+
+<title>摄影展 - 3D 画廊</title></head>
+
+<body>
+  <iframe src="3D.html" frameborder="0" width="100%" allow="
+  accelerometer;
+  autoplay;
+  camera;
+  clipboard-read;
+  clipboard-write;
+  display-capture;
+  encrypted-media;
+  fullscreen;
+  gamepad;
+  geolocation;
+  gyroscope;
+  hid;
+  identity-credentials-get;
+  idle-detection;
+  magnetometer;
+  microphone;
+  midi;
+  payment;
+  picture-in-picture;
+  publickey-credentials-get;
+  screen-wake-lock;
+  serial;
+  usb;
+  web-share;
+  xr-spatial-tracking
+"></iframe>
+
+  <div class="page-footer" style="opacity: 0;">
+    <!-- footer-left -->
+    <div class="footer-left">
+      <a href="https://www.zhihu.com/people/wwy-39-46" class="logo-wrapper" target="_blank">
+        <!-- 知乎logo -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 64 64">
+          <path fill="#0084ff" d="M44.875 3.02H19.143c-8.902 0-16.125 7.223-16.125 16.125v25.732c0 8.902 7.223 16.125 16.125 16.125h25.732c8.902 0 16.125-7.223 16.125-16.125V19.145c0-8.902-7.223-16.125-16.125-16.125zm-7.066 34.98c-1.105 0-2.012-.908-2.012-2.012 0-1.105.907-2.012 2.012-2.012s2.012.907 2.012 2.012c0 1.104-.907 2.012-2.012 2.012zm-9.02-8.04c0-3.316 2.684-6 6-6s6 2.684 6 6v14.066c0 3.316-2.684 6-6 6s-6-2.684-6-6V29.96z"/>
+          <path fill="#002d60" d="M37.809 29.96c0-3.316-2.684-6-6-6s-6 2.684-6 6v14.066c0 3.316 2.684 6 6 6s6-2.684 6-6V29.96z"/>
+        </svg>
+        <!-- logo-name -->
+        <span class="logo-name">
+          知乎搜索：李太白
+        </span>
+      </a>
+    </div>
+    <!-- footer-right -->
+    <div class="footer-right">
+      <span class="description">
+        <span
+          data-tooltip="网站由知乎：李太白创建，允许直接使用；如果有问题，请联系我。"
+          class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <g id="lucide/info" clip-path="url(#clip0_3923_133915)">
+              <path id="Vector"
+                d="M6 8V6M6 4H6.005M11 6C11 8.76142 8.76142 11 6 11C3.23858 11 1 8.76142 1 6C1 3.23858 3.23858 1 6 1C8.76142 1 11 3.23858 11 6Z"
+                stroke="#858481" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_3923_133915">
+                <rect width="12" height="12" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+        </span>
+        网站搭建者：李太白
+      </span>
+      <a href="https://www.zhihu.com/people/wwy-39-46" class="footer-button" target="_blank">
+        联系我
+      </a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" class="close">
+        <path d="M12 4L4 12" stroke="#858481" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 4L12 12" stroke="#858481" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="page-footer-mobile" style="opacity: 0;">
+    <!-- footer-right -->
+    <div class="footer-right">
+      <span class="description">
+        知乎搜索：李太白
+        <span
+          data-tooltip="网站由知乎：李太白创建，允许直接使用；如果有问题，请联系我。"
+          class="info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <g id="lucide/info" clip-path="url(#clip0_3923_133915)">
+              <path id="Vector"
+                d="M6 8V6M6 4H6.005M11 6C11 8.76142 8.76142 11 6 11C3.23858 11 1 8.76142 1 6C1 3.23858 3.23858 1 6 1C8.76142 1 11 3.23858 11 6Z"
+                stroke="#858481" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_3923_133915">
+                <rect width="12" height="12" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+        </span>
+
+      </span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" class="close">
+        <path d="M12 4L4 12" stroke="#858481" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 4L12 12" stroke="#858481" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    <!-- footer-left -->
+    <div class="footer-left">
+      <a href="https://www.zhihu.com/people/wwy-39-46" class="logo-wrapper" target="_blank">
+        <!-- 知乎logo -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 64 64">
+          <path fill="#0084ff" d="M44.875 3.02H19.143c-8.902 0-16.125 7.223-16.125 16.125v25.732c0 8.902 7.223 16.125 16.125 16.125h25.732c8.902 0 16.125-7.223 16.125-16.125V19.145c0-8.902-7.223-16.125-16.125-16.125zm-7.066 34.98c-1.105 0-2.012-.908-2.012-2.012 0-1.105.907-2.012 2.012-2.012s2.012.907 2.012 2.012c0 1.104-.907 2.012-2.012 2.012zm-9.02-8.04c0-3.316 2.684-6 6-6s6 2.684 6 6v14.066c0 3.316-2.684 6-6 6s-6-2.684-6-6V29.96z"/>
+          <path fill="#002d60" d="M37.809 29.96c0-3.316-2.684-6-6-6s-6 2.684-6 6v14.066c0 3.316 2.684 6 6 6s6-2.684 6-6V29.96z"/>
+        </svg>
+        <!-- logo-name -->
+        <span class="logo-name">
+          知乎搜索：李太白
+        </span>
+      </a>
+      <a href="https://manus.im/invitation?from=space" class="footer-button" target="_blank" style="margin-left: auto;">
+        联系我
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelector(".page-footer").style.opacity = "1"
+    document.querySelector(".page-footer-mobile").style.opacity = "1"
+
+    function handleClick() {
+      localStorage.setItem('embedClosed', 'true')
+      document.querySelector(".page-footer").style.display = 'none'
+      document.querySelector(".page-footer-mobile").style.display = 'none'
+    }
+
+    const els = document.querySelectorAll(".close")
+    els.forEach((el) => {
+      el.addEventListener('click', handleClick)
+    })
+
+    if (localStorage.getItem('embedClosed')) {
+      handleClick()
+    }
+  </script>
+
+  <script defer data-domain="manus.space"
+    src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
+  <script>window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+</body>
+
+</html>

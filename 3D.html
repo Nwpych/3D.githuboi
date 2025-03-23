@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄影展 - 3D 画廊</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #111;
+            color: #f5f5dc;
+            overflow: hidden;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .gallery-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 300px;
+            z-index: 10;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .gallery-info:hover {
+            opacity: 1;
+        }
+        
+        .gallery-info h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #f5f5dc;
+        }
+        
+        .gallery-info p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #111;
+            color: #f5f5dc;
+            z-index: 100;
+            transition: opacity 1s ease;
+        }
+        
+        .loading-screen h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(245, 245, 220, 0.3);
+            border-radius: 50%;
+            border-top-color: #f5f5dc;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .photo-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 400px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .photo-info.visible {
+            opacity: 1;
+        }
+        
+        .photo-info h2 {
+            margin-bottom: 10px;
+            color: #f5f5dc;
+        }
+        
+        .photo-info p {
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        .controls-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 10;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .controls-info:hover {
+            opacity: 1;
+        }
+        
+        .controls-info p {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div class="gallery-info">
+        <h1>摄影展</h1>
+        <p>一个精致的 3D 画廊，展示摄影和伴随诗歌。</p>
+    </div>
+    
+    <div class="controls-info">
+        <p>控件：单击 + 拖动以旋转 |滚动以缩放 |双击照片查看详细信息</p>
+    </div>
+    
+    <div class="photo-info" id="photo-info">
+        <h2 id="photo-title"></h2>
+        <p id="photo-poem"></p>
+    </div>
+    
+    <div class="loading-screen" id="loading-screen">
+        <h1>加载您的摄影展</h1>
+        <div class="loading-spinner"></div>
+        <p>准备您复杂的 3D 画廊体验...</p>
+    </div>
+
+    <script>
+        // Gallery data with photos and poems
+        const galleryData = {
+            photos: [
+                {
+                    id: "photo_10",
+                    filename: "photo_10.jpg",
+                    poem: "阳光在古树上翩翩起舞，低语着远古时代的秘密。"
+                },
+                {
+                    id: "photo_11",
+                    filename: "photo_11.jpg",
+                    poem: "城市几何图形框住了天空，具体的梦想达到了无限。"
+                },
+                {
+                    id: "photo_13",
+                    filename: "photo_13.jpeg",
+                    poem: "迷雾缭绕的山峦孕育着黎明，大地与天堂在这里共享转瞬即逝的吻。"
+                },
+                {
+                    id: "photo_14",
+                    filename: "photo_14.jpeg",
+                    poem: "光浪在黑暗中倾泻而下，在黑夜的画布上描绘着回忆。"
+                },
+                {
+                    id: "photo_15",
+                    filename: "photo_15.png",
+                    poem: "精致的花瓣展开了它们的故事，大自然的诗歌以鲜艳的色调书写。"
+                },
+                {
+                    id: "photo_16",
+                    filename: "photo_16.jpeg",
+                    poem: "倒影在平静的水面上荡漾，反映了我们不敢大声说出的真相。"
+                },
+                {
+                    id: "photo_17",
+                    filename: "photo_17.jpeg",
+                    poem: "在阴影和光明之间，我们发现自己——时间无尽旅程中的短暂旅行者。"
+                },
+                {
+                    id: "photo_18",
+                    filename: "photo_18.jpeg",
+                    poem: "剪影在渐渐褪色的白昼中翩翩起舞，无声地庆祝生命短暂的美丽。"
+                }
+            ]
+        };
+
+        // Three.js variables
+        let scene, camera, renderer, controls;
+        let photoFrames = [];
+        let raycaster, mouse;
+        let selectedPhoto = null;
+        
+        // DOM elements
+        const loadingScreen = document.getElementById('loading-screen');
+        const photoInfo = document.getElementById('photo-info');
+        const photoTitle = document.getElementById('photo-title');
+        const photoPoem = document.getElementById('photo-poem');
+        
+        // Initialize the scene
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1, 5);
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            // Add orbit controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 3;
+            controls.maxDistance = 10;
+            controls.maxPolarAngle = Math.PI / 1.5;
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Add spotlight
+            const spotlight = new THREE.SpotLight(0xffffff, 1);
+            spotlight.position.set(0, 5, 0);
+            spotlight.angle = Math.PI / 4;
+            spotlight.penumbra = 0.1;
+            spotlight.decay = 2;
+            spotlight.distance = 200;
+            scene.add(spotlight);
+            
+            // Create floor
+            const floorGeometry = new THREE.PlaneGeometry(50, 50);
+            const floorMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x111111,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -1;
+            scene.add(floor);
+            
+            // Setup for interaction
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+            
+            // Create photo frames
+            createPhotoFrames();
+            
+            // Add ambient particles
+            createAmbientParticles();
+            
+            // Add event listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('dblclick', onDoubleClick);
+            
+            // Start animation loop
+            animate();
+            
+            // Hide loading screen after a delay
+            setTimeout(() => {
+                loadingScreen.style.opacity = 0;
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 2000);
+        }
+        
+        // Create photo frames arranged in a circular gallery
+        function createPhotoFrames() {
+            const textureLoader = new THREE.TextureLoader();
+            const radius = 5;
+            const photoGroups = [
+                galleryData.photos.slice(0, 2),
+                galleryData.photos.slice(2, 4),
+                galleryData.photos.slice(4, 6),
+                galleryData.photos.slice(6, 8)
+            ];
+            
+            photoGroups.forEach((group, wallIndex) => {
+                const wallRotation = Math.PI * 2 * (wallIndex / 4);
+                
+                group.forEach((photo, index) => {
+                    // Calculate position for each photo on the wall
+                    const angle = Math.PI / 4 * (index - group.length / 2 + 0.5);
+                    const x = Math.sin(angle + wallRotation) * radius;
+                    const y = 1 + (index % 2) * 0.5; // Alternate heights
+                    const z = -Math.cos(angle + wallRotation) * radius;
+                    
+                    // Load texture
+                    // 修改加载方式，添加跨域处理
+                    const texture = textureLoader.load(
+                    'images/' + photo.filename,
+                    undefined,
+                    undefined,
+                    function(err) {
+                        console.error('加载失败:', photo.filename, err);
+                    }
+                    );
+                    texture.crossOrigin = "Anonymous"; // 添加跨域属性
+                    
+                    // 需要添加纹理加载完成后的更新逻辑
+                    texture.onUpdate = function() {
+                    photoMaterial.needsUpdate = true;
+                    };
+                    
+                    // Calculate aspect ratio (default to 1:1 if not available yet)
+                    const aspectRatio = 1;
+                    const width = 1.5;
+                    const height = width / aspectRatio;
+                    
+                    // Create frame
+                    const frameGroup = new THREE.Group();
+                    frameGroup.position.set(x, y, z);
+                    frameGroup.lookAt(0, y, 0);
+                    
+                    // Photo plane
+                    const photoGeometry = new THREE.PlaneGeometry(width, height);
+                    const photoMaterial = new THREE.MeshBasicMaterial({ 
+                        map: texture,
+                        side: THREE.DoubleSide
+                    });
+                    const photoMesh = new THREE.Mesh(photoGeometry, photoMaterial);
+                    photoMesh.userData = { 
+                        isPhoto: true, 
+                        photoData: photo 
+                    };
+                    frameGroup.add(photoMesh);
+                    
+                    // Frame border
+                    const borderGeometry = new THREE.PlaneGeometry(width + 0.1, height + 0.1);
+                    const borderMaterial = new THREE.MeshStandardMaterial({ 
+                        color: 0x333333,
+                        metalness: 0.8,
+                        roughness: 0.2,
+                        side: THREE.DoubleSide
+                    });
+                    const borderMesh = new THREE.Mesh(borderGeometry, borderMaterial);
+                    borderMesh.position.z = -0.01;
+                    frameGroup.add(borderMesh);
+                    
+                    scene.add(frameGroup);
+                    photoFrames.push({ 
+                        group: frameGroup, 
+                        photo: photoMesh, 
+                        border: borderMaterial,
+                        data: photo
+                    });
+                });
+            });
+        }
+        
+        // Create ambient particles for atmosphere
+        function createAmbientParticles() {
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1000;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+                posArray[i+1] = Math.random() * 5;
+                posArray[i+2] = (Math.random() - 0.5) * 10;
+                i += 2;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.015,
+                color: 0xf5f5dc,
+                transparent: true,
+                opacity: 0.5
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+        }
+        
+        // Handle window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Handle mouse movement for hover effects
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            let hoveredPhoto = null;
+            
+            for (let i = 0; i < intersects.length; i++) {
+                if (intersects[i].object.userData && intersects[i].object.userData.isPhoto) {
+                    hoveredPhoto = intersects[i].object;
+                    break;
+                }
+            }
+            
+            // Reset all borders
+            photoFrames.forEach(frame => {
+                frame.border.color.set(0x333333);
+                frame.border.emissive = new THREE.Color(0x000000);
+                frame.border.emissiveIntensity = 0;
+            });
+            
+            // Highlight hovered photo
+            if (hoveredPhoto) {
+                const frameIndex = photoFrames.findIndex(frame => frame.photo === hoveredPhoto);
+                if (frameIndex !== -1) {
+                    photoFrames[frameIndex].border.color.set(0xf5f5dc);
+                    photoFrames[frameIndex].border.emissive = new THREE.Color(0xf5f5dc);
+                    photoFrames[frameIndex].border.emissiveIntensity = 0.5;
+                }
+            }
+        }
+        
+        // Handle double click to show photo details
+        function onDoubleClick() {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            let clickedPhoto = null;
+            
+            for (let i = 0; i < intersects.length; i++) {
+                if (intersects[i].object.userData && intersects[i].object.userData.isPhoto) {
+                    clickedPhoto = intersects[i].object;
+                    break;
+                }
+            }
+            
+            if (clickedPhoto) {
+                const photoData = clickedPhoto.userData.photoData;
+                
+                // If clicking the same photo, hide info
+                if (selectedPhoto === photoData.id) {
+                    photoInfo.classList.remove('visible');
+                    selectedPhoto = null;
+                } else {
+                    // Show photo info
+                    photoTitle.textContent = photoData.id;
+                    photoPoem.textContent = photoData.poem;
+                    photoInfo.classList.add('visible');
+                    selectedPhoto = photoData.id;
+                }
+            } else {
+                // Clicked elsewhere, hide info
+                photoInfo.classList.remove('visible');
+                selectedPhoto = null;
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
